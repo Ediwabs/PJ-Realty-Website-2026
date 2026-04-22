@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PJ Realty - Property Gallery</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="PJ Realty property gallery images videos Ghana Accra East Legon luxury homes apartments for sale rent" name="keywords">
+    <meta content="View detailed property gallery with high-res images and videos from PJ Realty Ghana" name="description">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0a0a0a;
+            --secondary: #1a1a1a;
+            --accent: #c8b273;
+            --text: #e5e5e5;
+            --text-light: #a3a3a3;
+            --border: #333333;
+            --transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--primary); color: var(--text); line-height: 1.6; }
+        
+        header { background: rgba(10,10,10,0.95); padding: 1rem 0; position: fixed; width: 100%; z-index: 100; backdrop-filter: blur(10px); }
+        nav { max-width: 1400px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { color: var(--accent); font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; text-decoration: none; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { color: var(--text); text-decoration: none; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+        
+        .hero { height: 70vh; background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,0,0,0.3)), url('data:image/svg+xml;base64,...'); display: flex; align-items: center; justify-content: center; text-align: center; color: white; }
+        .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: 3.5rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto; }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+        .property-details { background: var(--secondary); padding: 4rem 0; }
+        .property-header { text-align: center; margin-bottom: 4rem; }
+        .property-title { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: var(--accent); margin-bottom: 1rem; }
+        .property-meta { display: flex; justify-content: center; gap: 2rem; font-size: 1.1rem; color: var(--text-light); }
+        
+        .gallery-section { padding: 4rem 0; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+        .gallery-item { position: relative; height: 250px; overflow: hidden; border-radius: 12px; cursor: pointer; transition: var(--transition); }
+        .gallery-item:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .gallery-item img, .gallery-item video { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .gallery-item:hover img, .gallery-item:hover video { transform: scale(1.1); }
+        .video-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(200,178,115,0.9); color: var(--primary); padding: 1rem 2rem; border-radius: 50px; font-weight: 600; }
+        
+        .main-gallery { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .main-gallery.active { display: flex; }
+        .main-image { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 8px; }
+        .gallery-nav { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; backdrop-filter: blur(10px); transition: var(--transition); }
+        .gallery-nav:hover { background: rgba(255,255,255,0.4); transform: translateY(-50%) scale(1.1); }
+        .gallery-nav.prev { left: 5%; }
+        .gallery-nav.next { right: 5%; }
+        .close-gallery { position: fixed; top: 30px; right: 30px; background: rgba(255,255,255,0.2); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; backdrop-filter: blur(10px); }
+        .close-gallery:hover { background: rgba(255,255,255,0.4); }
+        
+        .property-info { background: var(--secondary); padding: 3rem; border-radius: 12px; margin-top: 3rem; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+        .info-item h4 { color: var(--accent); margin-bottom: 0.5rem; font-size: 1.2rem; }
+        .features { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .feature-tag { background: var(--accent); color: var(--primary); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; }
+        
+        .contact-actions { text-align: center; margin-top: 3rem; padding-top: 3rem; border-top: 1px solid var(--border); }
+        .btn { padding: 1rem 2rem; border: none; border-radius: 30px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: var(--transition); text-decoration: none; display: inline-block; }
+        .btn-primary { background: var(--accent); color: var(--primary); }
+        .btn-primary:hover { background: #d9c99d; transform: translateY(-2px); }
+        .btn-whatsapp { background: #25D366; color: white; display: flex; align-items: center; gap: 0.5rem; }
+        .btn-whatsapp:hover { background: #20bd5f; }
+        
+        footer { background: var(--primary); padding: 3rem 0 1rem; text-align: center; color: var(--text-light); }
+        
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2rem; }
+            .property-title { font-size: 2rem; }
+            .property-meta { flex-direction: column; gap: 0.5rem; }
+            .gallery-nav { width: 50px; height: 50px; font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <a href="index.html" class="logo">PJ Realty</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="about.html">About</a>
+                <a href="Properties.html" class="active">Properties</a>
+                <a href="service.html">Services</a>
+                <a href="feature.html">Features</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </nav>
+    </header>
+    
+    <!-- Hero -->
+    <section class="hero">
+        <div>
+            <h1 id="property-title">Loading Property...</h1>
+            <p id="property-location"></p>
+        </div>
+    </section>
+    
+    <!-- Property Details -->
+    <section class="property-details">
+        <div class="container">
+            <div class="property-header">
+                <h1 id="property-full-title" class="property-title"></h1>
+                <div class="property-meta" id="property-meta">
+                    <!-- Dynamic meta -->
+                </div>
+            </div>
+            
+            <!-- Gallery Section -->
+            <div class="gallery-section">
+                <h2 style="text-align: center; color: var(--accent); margin-bottom: 2rem; font-family: 'Cormorant Garamond', serif;">Property Gallery</h2>
+                <div class="gallery-grid" id="gallery-grid">
+                    <!-- Dynamic gallery items -->
+                </div>
+            </div>
+            
+            <!-- Property Info -->
+            <div class="property-info">
+                <div class="info-grid" id="property-info">
+                    <!-- Dynamic info -->
+                </div>
+                <div class="contact-actions">
+                    <a href="#" class="btn btn-primary" id="book-tour-btn">Book Property Tour</a>
+                    <a href="https://wa.me/233538761404?text=Interested%20in%20property%20${encodeURIComponent(document.title)}" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Contact Agent
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Gallery Modal -->
+    <div class="main-gallery" id="main-gallery">
+        <img id="main-image" class="main-image" src="" alt="">
+        <button class="gallery-nav prev" id="prev-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="gallery-nav next" id="next-btn"><i class="fas fa-chevron-right"></i></button>
+        <button class="close-gallery" id="close-gallery"><i class="fas fa-times"></i></button>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlhx4V3j6B6zPq9Z5kL9mN2pR7tU8vW4xY1",
+            authDomain: "pj-realty.firebaseapp.com",
+            databaseURL: "https://pj-realty-default-rtdb.firebaseio.com",
+            projectId: "pj-realty",
+            storageBucket: "pj-realty.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        window.firebaseDB = db;
+    </script>
+    
+    <!-- Main Script -->
+    <script>
+        AOS.init({ duration: 800, once: true });
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const propertyId = urlParams.get('id') || 1;
+        
+        let currentProperty = null;
+        let galleryImages = [];
+        let currentImageIndex = 0;
+        
+        // DOM Elements
+        const titleEl = document.getElementById('property-title');
+        const fullTitleEl = document.getElementById('property-full-title');
+        const locationEl = document.getElementById('property-location');
+        const metaEl = document.getElementById('property-meta');
+        const galleryGrid = document.getElementById('gallery-grid');
+        const infoEl = document.getElementById('property-info');
+        const mainGallery = document.getElementById('main-gallery');
+        const mainImage = document.getElementById('main-image');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const closeGallery = document.getElementById('close-gallery');
+        const bookTourBtn = document.getElementById('book-tour-btn');
+        
+        // Load property by ID
+        function loadProperty(id) {
+            const propertyRef = ref(window.firebaseDB, `properties/${id}`);
+            onValue(propertyRef, (snapshot) => {
+                currentProperty = snapshot.val();
+                if (currentProperty) {
+                    displayProperty(currentProperty);
+                } else {
+                    // Fallback to static
+                    loadStaticProperty(id);
+                }
+            });
+        }
+        
+        function displayProperty(property) {
+            // Update title/location
+            titleEl.textContent = property.title;
+            fullTitleEl.textContent = property.title;
+            locationEl.textContent = property.location;
+            
+            // Meta
+            metaEl.innerHTML = `
+                <div><i class="fas fa-dollar-sign"></i> $${property.price}/month</div>
+                <div><i class="fas fa-bed"></i> ${property.bedrooms} Beds</div>
+                <div><i class="fas fa-bath"></i> ${property.bathrooms} Baths</div>
+                <div><i class="fas fa-star"></i> ${property.rating}</div>
+            `;
+            
+            // Gallery
+            galleryImages = property.images || [];
+            renderGallery(galleryImages);
+            
+            // Info
+            renderInfo(property);
+            
+            // Update WhatsApp link
+            bookTourBtn.href = `https://wa.me/233538761404?text=Interested%20in%20${encodeURIComponent(property.title)}%20in%20${property.location}`;
+            document.title = `${property.title} - PJ Realty`;
+        }
+        
+        function renderGallery(images) {
+            galleryGrid.innerHTML = '';
+            images.slice(0, 12).forEach((src, idx) => {
+                const item = document.createElement('div');
+                item.className = 'gallery-item';
+                item.onclick = () => openMainGallery(idx);
+                
+                if (src.endsWith('.mp4') || src.includes('video')) {
+                    item.innerHTML = `
+                        <video preload="metadata">
+                            <source src="${src}" type="video/mp4">
+                        </video>
+                        <div class="video-overlay">▶ VIDEO</div>
+                    `;
+                } else {
+                    item.innerHTML = `<img src="${src}" alt="Gallery ${idx + 1}" loading="lazy">`;
+                }
+                
+                galleryGrid.appendChild(item);
+            });
+        }
+        
+        function renderInfo(property) {
+            infoEl.innerHTML = `
+                <div>
+                    <h4><i class="fas fa-info-circle"></i> Description</h4>
+                    <p>${property.description || 'Premium property with modern amenities.'}</p>
+                </div>
+                <div>
+                    <h4><i class="fas fa-list"></i> Features</h4>
+                    <div class="features">
+                        ${property.features?.map(f => `<span class="feature-tag">${f}</span>`).join('') || ''}
+                    </div>
+                </div>
+                <div>
+                    <h4><i class="fas fa-tag"></i> Price</h4>
+                    <p class="price">$${property.price}/month ${property.selling_price ? `<br><small>Sale: $${property.selling_price}</small>` : ''}</p>
+                </div>
+            `;
+        }
+        
+        function openMainGallery(startIndex = 0) {
+            currentImageIndex = startIndex;
+            updateMainImage();
+            mainGallery.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMainGallery() {
+            mainGallery.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function updateMainImage() {
+            const src = galleryImages[currentImageIndex];
+            if (src.includes('.mp4')) {
+                mainImage.src = src;
+                mainImage.style.display = 'block';
+            } else {
+                mainImage.src = src;
+            }
+        }
+        
+        prevBtn.onclick = () => {
+            currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+            updateMainImage();
+        };
+        
+        nextBtn.onclick = () => {
+            currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+            updateMainImage();
+        };
+        
+        closeGallery.onclick = closeMainGallery;
+        mainGallery.onclick = (e) => { if (e.target === mainGallery) closeMainGallery(); };
+        
+        // Fallback static data
+        function loadStaticProperty(id) {
+            const staticData = {
+["aa (1).jpg", "aa (2).jpg", "aa (3).jpg", "aa (4).jpg", "aa (5).jpg"]
+            }[id] || { id: 1, title: "Featured Property", location: "Accra", price: 4500, rating: 4.9, bedrooms: 4, bathrooms: 3, images: [], features: [], description: "Premium property" };
+            displayProperty(staticData);
+        }
+        
+        // Init
+        loadProperty(propertyId);
+    </script>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 PJ Realty. All rights reserved. | <a href="Properties.html">← Back to Properties</a></p>
+        </div>
+    </footer>
+</body>
+</html>

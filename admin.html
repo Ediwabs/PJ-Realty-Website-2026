@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PJ Realty Admin - Property Management</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #c8b273;
+            --text: #e5e5e5;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--primary); color: var(--text); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; margin-bottom: 40px; padding: 20px; background: rgba(200,178,115,0.1); border-radius: 12px; }
+        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 500; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 8px; background: #2a2a2a; color: var(--text); }
+        button { background: var(--accent); color: var(--primary); border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s; }
+        button:hover { background: #d9c99d; transform: translateY(-2px); }
+        button:disabled { background: #666; cursor: not-allowed; }
+        .properties-list { background: #2a2a2a; border-radius: 12px; padding: 20px; max-height: 500px; overflow-y: auto; }
+        .property-item { padding: 16px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
+        .delete-btn { background: #ff4444; color: white; padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+        #auth-section, #admin-section { display: none; }
+        #login-section { max-width: 400px; margin: 0 auto; }
+        .success, .error { padding: 12px; border-radius: 8px; margin: 10px 0; }
+        .success { background: rgba(56,161,105,0.2); color: #38a169; }
+        .error { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .uploading { display: none; }
+        .file-list { margin-top: 10px; }
+        .file-preview { max-width: 100px; max-height: 100px; margin: 5px; border-radius: 8px; }
+        @media (max-width: 768px) { .admin-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PJ Realty Property Admin</h1>
+            <p>Upload/manage property images & videos</p>
+        </div>
+
+        <!-- Login Section -->
+        <div id="login-section">
+            <div class="form-group">
+                <label>Admin Email</label>
+                <input type="email" id="login-email" placeholder="admin@pjrealty.com">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Password">
+            </div>
+            <button onclick="login()">Login</button>
+        </div>
+
+        <!-- Admin Section -->
+        <div id="admin-section">
+            <div class="admin-grid">
+                <!-- Add Property Form -->
+                <div>
+                    <h3>Add New Property</h3>
+                    <form id="add-property">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="prop-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" id="prop-location" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Price (USD/month)</label>
+                            <input type="number" id="prop-price" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Bedrooms</label>
+                            <input type="number" id="prop-bedrooms" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Files (Images/Videos)</label>
+                            <input type="file" id="prop-files" multiple accept="image/*,video/*">
+                            <div class="file-list" id="file-preview"></div>
+                            <div class="uploading" id="upload-progress">Uploading...</div>
+                        <button type="submit">Add Property</button>
+                    </form>
+                </div>
+
+                <!-- Properties List -->
+                <div>
+                    <h3>Manage Properties</h3>
+                    <div class="properties-list" id="properties-list">
+                        <p>Loading...</p>
+                    </div>
+            </div>
+            <button onclick="logout()" style="margin-top: 20px;">Logout</button>
+        </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+        import { getDatabase, ref, push, set, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getStorage, ref as storageRef, uploadBytes, listAll, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDlhx4kmyG7CHv1EkoHHiqb2I7mN-3sQSY",
+            authDomain: "pjrealty-15f3f.firebaseapp.com",
+            databaseURL: "https://pjrealty-15f3f-default-rtdb.firebaseio.com",
+            projectId: "pjrealty-15f3f",
+            storageBucket: "pjrealty-15f3f.appspot.com",
+            messagingSenderId: "178989540349",
+            appId: "1:178989540349:web:ce3224a6c35c9c5f3f9e77"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+
+        let user = null;
+
+        // Auth listeners
+        onAuthStateChanged(auth, (u) => {
+            user = u;
+            if (user) {
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('admin-section').style.display = 'block';
+                loadProperties();
+            } else {
+                document.getElementById('login-section').style.display = 'block';
+                document.getElementById('admin-section').style.display = 'none';
+            }
+        });
+
+        async function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (error) {
+                alert('Login failed: ' + error.message);
+            }
+        }
+
+        function logout() {
+            signOut(auth);
+        }
+
+        // Load properties from Firebase
+        function loadProperties() {
+            const propertiesRef = ref(db, 'properties');
+            onValue(propertiesRef, (snapshot) => {
+                const list = document.getElementById('properties-list');
+                list.innerHTML = '';
+                
+                const data = snapshot.val();
+                if (!data) return;
+
+                Object.entries(data).forEach(([id, prop]) => {
+                    const item = document.createElement('div');
+                    item.className = 'property-item';
+                    item.innerHTML = `
+                        <div>
+                            <strong>${prop.title}</strong><br>
+                            <small>${prop.location} - $${prop.price}</small>
+                        </div>
+                        <button class="delete-btn" onclick="deleteProperty('${id}')">Delete</button>
+                    `;
+                    list.appendChild(item);
+                });
+            });
+        }
+
+        // Delete property
+        async function deleteProperty(id) {
+            if (!confirm('Delete this property?')) return;
+            
+            await remove(ref(db, `properties/${id}`));
+        }
+
+        // Add new property
+        document.getElementById('add-property').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('prop-title').value;
+            const location = document.getElementById('prop-location').value;
+            const price = parseInt(document.getElementById('prop-price').value);
+            const bedrooms = parseInt(document.getElementById('prop-bedrooms').value);
+            
+            const files = document.getElementById('prop-files').files;
+            const uploadProgress = document.getElementById('upload-progress');
+            
+            if (files.length === 0) {
+                alert('Please select files');
+                return;
+            }
+
+            uploadProgress.style.display = 'block';
+            
+            try {
+                // Upload files to Storage
+                const imageUrls = [];
+                for (let file of files) {
+                    const storagePath = `properties/${Date.now()}_${file.name}`;
+                    const fileRef = storageRef(storage, storagePath);
+                    await uploadBytes(fileRef, file);
+                    const url = await getDownloadURL(fileRef);
+                    imageUrls.push(url);
+                }
+
+                // Save to Database
+                const newPropRef = push(ref(db, 'properties'));
+                await set(newPropRef, {
+                    title,
+                    location,
+                    price,
+                    bedrooms,
+                    images: imageUrls,
+                    timestamp: Date.now()
+                });
+
+                // Reset form
+                document.getElementById('add-property').reset();
+                document.getElementById('file-preview').innerHTML = '';
+                
+                alert('Property added successfully!');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                uploadProgress.style.display = 'none';
+            }
+        });
+
+        // File preview
+        document.getElementById('prop-files').addEventListener('change', (e) => {
+            const preview = document.getElementById('file-preview');
+            preview.innerHTML = '';
+            
+            Array.from(e.target.files).forEach(file => {
+                const div = document.createElement('div');
+                div.innerHTML = `<img src="${URL.createObjectURL(file)}" class="file-preview" alt="${file.name}">`;
+                preview.appendChild(div);
+            });
+        });
+    </script>
+</body>
+</html>

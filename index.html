@@ -65,8 +65,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&family=Teko:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- Icon Font Stylesheet -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+<https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css>
+<https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css>
 
     <!-- Libraries Stylesheet -->
     <link href="lib/animate/animate.min.css" rel="stylesheet">
@@ -1126,12 +1126,14 @@
             <nav>
                 <a href="index.html" class="logo">PJ REALTY</a>
                 <div class="nav-links">
-                       <a href="index.html" class="nav-item nav-link">Home</a>
-                <a href="about.html" class="nav-item nav-link ">About</a>
+                       <a href="index.html" class="nav-item nav-link active">Home</a>
+                <a href="about.html" class="nav-item nav-link">About</a>
 <a href="gallery.html" class="nav-item nav-link">Gallery</a>
                 <a href="service.html" class="nav-item nav-link">Services</a>
+                <a href="new-listings.html" class="nav-item nav-link">New Listings</a>
                 <a href="feature.html" class="nav-item nav-link"> Features </a>
                 <a href="contact.html" class="nav-item nav-link">Contact</a>
+
                 </div>
                  
             <a href="https://wa.me/c/233538761404" class="btn btn-primary py-2 px-4 d-none d-lg-block">Whatsapp Us </a>
@@ -1150,9 +1152,11 @@
         </div>
         <a href="index.html" class="active">Home</a>
 <a href="gallery.html">Gallery</a>
+        <a href="new-listings.html">New Listings</a>
         <a href="services.html">Services</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
+
     </div>
 
     <!-- Hero Section with Background Video -->
@@ -1498,7 +1502,7 @@
             <!-- Video Card -->
             <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.2s">
                 <div class="feature-card h-100 rounded-4 overflow-hidden position-relative">
-                    <video autoplay loop muted playsinline class="w-100 h-100 object-cover" style="min-height: 300px;">
+video autoplay loop muted playsinline controls preload="metadata" poster="V (2).jpg" class="w-100 h-100 object-cover" style="min-height: 300px;">
                         <source src="TYP.mp4" type="video/mp4">
                         <!-- Fallback image if video doesn't load -->
                         <img src="V (2).jpg" alt="Luxury property showcase Accra Lagos real estate PJ Realty" class="img-fluid">
@@ -1634,6 +1638,76 @@
         </div>
     </section>
 
+    <!-- Featured Properties Carousel (Dynamic from Firebase/Local Gallery) -->
+    <section class="section" data-aos="fade-up" id="featured-properties">
+        <div class="container">
+            <div class="section-header">
+                <h2>Featured Properties</h2>
+                <p>Latest listings from our gallery - updated automatically</p>
+            </div>
+            <div class="property-grid" id="featured-grid">
+                <!-- Dynamic content loaded by JS -->
+                <div class="text-center py-5">
+                    <i class="fas fa-spinner fa-spin fa-3x text-primary mb-3"></i>
+                    <p>Loading featured properties...</p>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="gallery.html" class="btn btn-accent me-2">View Full Gallery</a>
+                <a href="new-listings.html" class="btn btn-secondary">Add New Listing</a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        #featured-properties .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        #featured-properties .property-card {
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        #featured-properties .property-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        #featured-properties .property-img {
+            height: 250px;
+            overflow: hidden;
+        }
+        #featured-properties .property-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        #featured-properties .property-card:hover .property-img img {
+            transform: scale(1.1);
+        }
+        #featured-properties .property-info {
+            padding: 25px;
+        }
+        #featured-properties .property-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        #featured-properties .property-price {
+            font-size: 22px;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        #featured-properties .property-loc {
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+
     <!-- Testimonials Section -->
     <section class="section testimonials">
         <div class="container">
@@ -1753,6 +1827,12 @@
         <i class="fas fa-arrow-up"></i>
     </a>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="gallery-firebase.js"></script>
+    
     <!-- JavaScript Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
@@ -1839,6 +1919,70 @@
                 fallbackImage.className = 'hero-bg';
                 heroVideo.parentNode.replaceChild(fallbackImage, heroVideo);
             });
+        }
+
+// Dynamic Featured Properties - Prioritize new uploads from localStorage
+        function loadFeaturedProperties() {
+            const grid = document.getElementById('featured-grid');
+            
+            // Load new listings first
+            let newListings = JSON.parse(localStorage.getItem('pjNewListings')) || [];
+            let galleryImages = window.firebaseGalleryImages || window.galleryImages || [];
+            
+            // Combine & dedupe (new first)
+            let allProperties = [...newListings, ...galleryImages.filter(img => !newListings.some(nl => nl.src === img.src))];
+            
+            if (allProperties.length === 0) {
+                grid.innerHTML = '<div class="col-12 text-center py-5"><p>No properties yet. <a href="new-listings.html">Add New Listing</a> or check <a href="gallery.html">Gallery</a>.</p></div>';
+                return;
+            }
+            
+            grid.innerHTML = allProperties.slice(0, 6).map((item) => {
+                const title = item.title || 'New Property';
+                const price = item.price || 'Price on Request';
+                const loc = item.loc || item.location || 'Accra';
+                
+                return `
+                    <div class="property-card">
+                        <div class="property-img">
+                            ${item.src.endsWith('.mp4') || item.src.startsWith('data:video') ? 
+                                `<video src="${item.src}" muted loop playsinline style="width:100%;height:100%;object-fit:cover;" preload="metadata"></video>` : 
+                                `<img src="${item.src}" alt="${title}" loading="lazy">`
+                            }
+                            <div class="property-badge">${item.type?.toUpperCase() || 'NEW'}</div>
+                        </div>
+                        <div class="property-info">
+                            <h4 class="property-title">${title}</h4>
+                            <div class="property-price">${price}</div>
+                            <div class="property-loc">${loc}</div>
+                            <a href="gallery.html" class="btn btn-secondary mt-3">View Details</a>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load featured after Firebase ready
+        function initFeatured() {
+            if (window.PJGalleryFirebase) {
+                window.PJGalleryFirebase.update(); // Trigger Firebase load
+            }
+            // Poll for data every 500ms up to 5s
+            let attempts = 0;
+            const checkData = setInterval(() => {
+                if ((window.firebaseGalleryImages && window.firebaseGalleryImages.length > 0) || attempts > 10) {
+                    loadFeaturedProperties();
+                    clearInterval(checkData);
+                }
+                attempts++;
+            }, 500);
+        }
+
+        // Init on DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initFeatured);
+        } else {
+            initFeatured();
         }
     </script>
      <!-- JavaScript Libraries -->

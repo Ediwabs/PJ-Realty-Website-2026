@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PJ Realty - Gallery | Luxury Properties Ghana</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="PJ Realty property gallery images videos Ghana Accra East Legon luxury homes apartments for sale rent" name="keywords">
+    <meta content="View our stunning property gallery featuring luxury homes, apartments and estates across Ghana" name="description">
+    
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+    
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600&amp;family=Teko:wght@400;500;600&amp;display=swap" rel="stylesheet"> 
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet">
+    
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+    
+    <!-- Gallery Specific Styles -->
+    <style>
+        .gallery-section { padding: 5rem 0; background: #f8f9fa; }
+        .page-header { background: linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url('house 1.jpg') center center/cover; }
+        .gallery-filters { margin-bottom: 3rem; }
+        .filter-btn { margin: 0 0.5rem 1rem 0; padding: 0.75rem 1.5rem; border: 2px solid #e6a441; background: transparent; color: #252525; transition: all 0.3s; border-radius: 50px; }
+        .filter-btn.active, .filter-btn:hover { background: #e6a441; color: white; transform: translateY(-2px); }
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 1.5rem; 
+        }
+        .gallery-item { 
+            position: relative; 
+            height: 280px; 
+            overflow: hidden; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            transition: all 0.4s ease; 
+        }
+        .gallery-item:hover { 
+            transform: translateY(-15px) scale(1.02); 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2); 
+        }
+        .gallery-item img, .gallery-item video { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            transition: transform 0.6s ease; 
+        }
+        .gallery-item:hover img, .gallery-item:hover video { transform: scale(1.1); }
+        .gallery-overlay { 
+            position: absolute; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: linear-gradient(transparent, rgba(0,0,0,0.85)); 
+            color: white; 
+            padding: 2rem 1.5rem 1.5rem; 
+            transform: translateY(100%); 
+            transition: transform 0.3s ease; 
+        }
+        .gallery-item:hover .gallery-overlay { transform: translateY(0); }
+        .property-title { font-weight: 600; font-size: 1.1rem; margin-bottom: 0.25rem; }
+        .property-meta { font-size: 0.9rem; opacity: 0.9; }
+        .video-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); background: rgba(230,164,65,0.95); color: #252525; padding: 1rem 2rem; border-radius: 50px; font-weight: 600; font-size: 0.9rem; }
+        
+        /* Main Gallery Modal */
+        .main-gallery { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.98); z-index: 9999; 
+            display: none; align-items: center; justify-content: center; 
+            padding: 2rem; 
+        }
+        .main-gallery.active { display: flex; }
+        .main-media { max-width: 95%; max-height: 95%; object-fit: contain; border-radius: 10px; box-shadow: 0 0 50px rgba(255,255,255,0.1); }
+        .gallery-nav { 
+            position: fixed; top: 50%; transform: translateY(-50%); 
+            background: rgba(230,164,65,0.9); color: #252525; border: none; 
+            width: 60px; height: 60px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; 
+            backdrop-filter: blur(10px); transition: all 0.3s; 
+        }
+        .gallery-nav:hover { background: #e6a441; transform: translateY(-50%) scale(1.1); }
+        .gallery-nav.prev { left: 3%; }
+        .gallery-nav.next { right: 3%; }
+        .close-gallery { 
+            position: fixed; top: 3rem; right: 3rem; background: rgba(255,255,255,0.2); color: white; 
+            border: none; width: 55px; height: 55px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; 
+            backdrop-filter: blur(10px); transition: all 0.3s; 
+        }
+        .close-gallery:hover { background: rgba(255,255,255,0.4); transform: scale(1.1); }
+        
+        /* New Listings Admin Styles */
+        #new-listings-section { padding: 5rem 0 !important; }
+        #new-listings-section .card { box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: none; border-radius: 15px; }
+        #new-listings-section .form-control, #new-listings-section select { border-radius: 10px; border: 2px solid #e9ecef; padding: 0.75rem; }
+        #new-listings-section .form-control:focus, #new-listings-section select:focus { border-color: #e6a441; box-shadow: 0 0 0 0.2rem rgba(230,164,65,0.25); }
+        #new-listings-section .new-listing-item { margin-bottom: 1rem; border: 1px solid #dee2e6; border-radius: 10px; padding: 1rem; background: white; }
+        #new-listings-section .new-listing-preview { width: 100px; height: 75px; object-fit: cover; border-radius: 5px; }
+        #admin-panel .btn { margin-right: 0.5rem; margin-bottom: 0.5rem; border-radius: 25px; }
+        .admin-hidden { display: none !important; }
+        
+        @media (max-width: 768px) {
+            .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+            .gallery-item { height: 250px; }
+            .gallery-nav { width: 50px; height: 50px; font-size: 1.2rem; }
+            .gallery-nav.prev { left: 1rem; }
+            .gallery-nav.next { right: 1rem; }
+            #new-listings-section .row > div { margin-bottom: 1rem; }
+            #new-listings-section .new-listing-preview { width: 80px; height: 60px; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Navbar & Hero Start -->
+    <div class="container-fluid position-relative p-0">
+        <nav class="navbar navbar-expand-lg navbar-dark px-3 px-lg-5 py-3 py-lg-0 sticky-top">
+            <a href="index.html" class="navbar-brand">
+                <h1 class="text-primary m-0"><i class="fa fa-home me-2"></i>PJ Realty</h1>
+            </a>
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+                <div class="navbar-nav ms-auto">
+                    <a href="index.html" class="nav-item nav-link">Home</a>
+                    <a href="about.html" class="nav-item nav-link">About</a>
+                    <a href="gallery.html" class="nav-item nav-link active">Gallery</a>
+                    <a href="service.html" class="nav-item nav-link">Service</a>
+                    <a href="new-listings.html" class="nav-item nav-link">New Listings</a>
+                    <a href="gallery.html" class="nav-item nav-link">Properties</a>
+                    <a href="contact.html" class="nav-item nav-link">Contact</a>
+
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Page Header Start -->
+        <div class="container-fluid page-header py-5 mb-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <h1 class="display-1 text-white animated slideInDown">NEW LISTINGS</h1>
+                <nav aria-label="breadcrumb animated slideInDown">
+                    <ol class="breadcrumb text-uppercase mb-0">
+                        <li class="breadcrumb-item"><a class="text-white" href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a class="text-white" href="gallery.html">Gallery</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page"><a class="text-white" href="gallery.html">Gallery</a>Property Gallery</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar & Hero End -->
+
+    <!-- Gallery Start -->
+    <div class="container-xxl py-5">
+        <div class="container">
+            <!-- Filters -->
+            <div class="row g-0 justify-content-center text-center mb-5 gallery-filters">
+                <div class="col-lg-8">
+                    <h2 class="section-title text-center mx-auto mb-4 wow zoomIn" data-wow-delay="0.1s">Our Luxury Properties</h2>
+                    <p class="mb-4">Explore our stunning collection of luxury homes, apartments, and estates across prime Ghanaian locations</p>
+                    <div>
+                        <button class="filter-btn active" data-filter="all">NEW PROPERTIES FOR SALE</button>
+                 <!--   <button class="filter-btn" data-filter="villa">VILLAS</button> --> 
+                        <button class="filter-btn" data-filter="apartment">NEW RENTALS</button>
+                        <button class="filter-btn" data-filter="video">Videos</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Gallery Grid -->
+            <div class="gallery-section">
+                <div class="gallery-grid" id="gallery-grid">
+                    <!-- Dynamic gallery items will be populated by JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Gallery End -->
+
+    <!-- Main Gallery Modal -->
+    <div class="main-gallery" id="main-gallery">
+        <div id="main-media" class="main-media"></div>
+        <button class="gallery-nav prev" id="prev-btn"><i class="fas fa-chevron-left"></i></button>
+        <button class="gallery-nav next" id="next-btn"><i class="fas fa-chevron-right"></i></button>
+        <button class="close-gallery" id="close-gallery"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- New Listings Admin Section -->
+    <div class="container-xxl py-5 bg-light" id="new-listings-section" style="display: none;">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="text-center mb-5">
+                        <h2 class="section-title mb-4">New Listings Admin Panel</h2>
+                        <p>Admin password: <code>admin123</code> (Toggle panel)</p>
+                        <button class="btn btn-primary" id="toggle-admin">Admin Login</button>
+                    </div>
+                    <div id="admin-panel" style="display: none;">
+                        <!-- Add Form -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5><i class="fas fa-plus"></i> Add New Listing</h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="add-listing-form">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label>Title</label>
+                                            <input type="text" class="form-control" id="new-title" required>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label>Price</label>
+                                            <input type="text" class="form-control" id="new-price" placeholder="$500K" required>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label>Location</label>
+                                            <input type="text" class="form-control" id="new-loc" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label>Type</label>
+                                            <select class="form-control" id="new-type">
+                                                <option value="villa">Villa</option>
+                                                <option value="apartment">Apartment</option>
+                                                <option value="video">Video</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label>File (Image/Video)</label>
+                                            <input type="file" class="form-control" id="new-file" accept="image/*,video/*" required>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-success"><i class="fas fa-upload"></i> Add Listing</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- New Listings List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list"></i> New Listings (<span id="new-count">0</span>)</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="new-listings-list" class="row"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-light footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="section-title text-white mb-4">PJ Realty</h4>
+                    <p class="mb-4">Your trusted partner for luxury properties in Ghana. Expert real estate services in East Legon, Trasacco & Airport Residential.</p>
+                    <div class="d-flex justify-content-start">
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-twitter"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle" href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="section-title text-white mb-4">Quick Links</h4>
+                    <a class="btn btn-link" href="index.html">Home</a>
+                    <a class="btn btn-link" href="about.html">About</a>
+                    <a class="btn btn-link" href="service.html">Services</a>
+                    <a class="btn btn-link" href="gallery.html">Gallery</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="section-title text-white mb-4">Popular Links</h4>
+                    <a class="btn btn-link" href="gallery.html">Properties</a>
+                    <a class="btn btn-link" href="feature.html">Features</a>
+                    <a class="btn btn-link" href="appointment.html">Appointment</a>
+                    <a class="btn btn-link" href="team.html">Team</a>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h4 class="section-title text-white mb-4">Contact Info</h4>
+                    <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Accra, Ghana</p>
+                    <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+233 25 777 7456</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@pjrealty.com</p>
+                    <div class="d-flex justify-content-start mt-4">
+                        <a class="btn btn-lg btn-primary btn-lg-square rounded-circle me-2" href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                        &copy; <a class="border-bottom" href="#">Your Site Name</a>, All Right Reserved. 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/counterup/counterup.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="../PJ edit/gallery-firebase.js"></script>
+    
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+    
+    <!-- Gallery JavaScript -->
+    <script>
+        // Gallery Data - Real properties from project files
+        const galleryImages = [
+            {src: 'house 1.1.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.2.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.3.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.4.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.5.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.6.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.7.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.8.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 1.9.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.0.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.1.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.2.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.3.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.4.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.5.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.6.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.7.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.8.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'house 2.9.jpg', type: 'villa', title: 'Ashaley Botwe Villa', price: '$155,000', loc: 'Ashaley Botwe'},
+            {src: 'villa-house-model-key-drawing-retro-desktop-real-estate-sale-concept.jpg', type: 'villa', title: '', price: '', loc: 'END OF CURRENT LISTING...NEXT...'},
+           
+            {src: 'house 3.0.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.1.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.2.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.3.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.4.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.5.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.6.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.7.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.8.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 3.9.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 4.0.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 4.1.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 4.2.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 4.3.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 4.4.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'house 4.5.jpg', type: 'apartment', title: 'Ensuite 4 Bedroom House with BBQ - Newly Built 2-storey Executive Home', price: '$2000/month', loc: 'East Legon Hills Gate'},
+            {src: 'villa-house-model-key-drawing-retro-desktop-real-estate-sale-concept.jpg', type: 'apartment', title: '', price: '', loc: 'END OF CURRENT LISTING...NEXT...'},
+
+            {src: 'house 4.6.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 4.7.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 4.8.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.3.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.4.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.1.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.2.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.5.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.6.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.7.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.8.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 5.9.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            {src: 'house 6.0.jpg', type: 'apartment', title: 'Executive 4 Bedroom House for office or Commercial Space', price: '$2900/month', loc: 'East Legon by American House'},
+            
+            {src: 'villa-house-model-key-drawing-retro-desktop-real-estate-sale-concept.jpg', type: 'apartment', title: '', price: '', loc: 'END OF CURRENT LISTING...NEXT...'},
+            
+            
+            
+
+            {src: 'house4.jpg', type: 'apartment', title: 'Trasacco Penthouse', price: '$650K', loc: 'Trasacco'},
+            {src: 'house5.jpg', type: 'villa', title: 'Modern Family Home', price: '$850K', loc: 'East Legon'},
+            {src: 'house6.jpg', type: 'apartment', title: 'Sea View Apartment', price: '$420K', loc: 'Labadi'},
+            {src: 'HOUSE 3.jpg', type: 'villa', title: 'Executive Villa', price: '$1.1M', loc: 'Airport Res.'},
+            {src: 'house 7.jpg', type: 'apartment', title: 'Luxury Condo', price: '$380K', loc: 'Cantonments'},
+            {src: 'bb (1).jpg', type: 'villa', title: 'Contemporary Estate', price: '$1.05M', loc: 'Trasacco'},
+            {src: 'bb (2).jpg', type: 'apartment', title: 'Skyline Apartment', price: '$510K', loc: 'Airport City'},
+            {src: 'bb (3).jpg', type: 'villa', title: 'Garden Villa', price: '$890K', loc: 'East Legon'},
+            {src: 'bb (4).jpg', type: 'apartment', title: 'Riverfront Flat', price: '$360K', loc: 'Osu'},
+            {src: 'bb (5).jpg', type: 'villa', title: 'Hilltop Mansion', price: '$1.3M', loc: 'Airport Res.'},
+            {src: 'bb (6).jpg', type: 'apartment', title: 'Designer Penthouse', price: '$620K', loc: 'Trasacco'},
+            {src: 'bb (7).jpg', type: 'villa', title: 'Lakeview Home', price: '$975K', loc: 'Labadi'},
+            {src: 'zx (1).jpg', type: 'apartment', title: 'Urban Loft', price: '$340K', loc: 'Osu'},
+            {src: 'zx (2).jpg', type: 'villa', title: 'Private Estate', price: '$1.45M', loc: 'East Legon'},
+            {src: 'zx (3).jpg', type: 'apartment', title: 'High-rise Unit', price: '$450K', loc: 'Airport City'},
+            {src: 'zx (4).jpg', type: 'villa', title: 'Classic Mansion', price: '$1.18M', loc: 'Cantonments'},
+            {src: 'zx (5).jpg', type: 'apartment', title: 'Waterfront Apt', price: '$410K', loc: 'Labadi'},
+            {src: 'cf.mp4', type: 'video', title: 'Virtual Tour - Luxury Villa', price: 'Virtual Tour', loc: 'East Legon'},
+            {src: 'TYP.mp4', type: 'video', title: 'Property Showcase Tour', price: 'Video Tour', loc: 'Accra'}
+        ];
+         
+         let currentImageIndex = 0;
+         let filteredImages = [...galleryImages];
+        
+        const galleryGrid = document.getElementById('gallery-grid');
+        const mainGallery = document.getElementById('main-gallery');
+        const mainMedia = document.getElementById('main-media');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const closeGallery = document.getElementById('close-gallery');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        
+        // Render Gallery
+        function renderGallery(images = filteredImages) {
+            galleryGrid.innerHTML = '';
+            images.slice(0, 24).forEach((item, idx) => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.onclick = () => openMainGallery(idx);
+                
+                if (item.src.endsWith('.mp4')) {
+                    galleryItem.innerHTML = `
+                        <video class="w-100 h-100 object-cover" preload="metadata" muted loop playsinline style="min-height: 300px;">
+                            <source src="${item.src}" type="video/mp4">
+                            <img src="${item.src.replace('.mp4', '.jpg')}" alt="${item.title}">
+                        </video>
+<div class="video-overlay"><i class="fas fa-play"></i> Video</div>
+                        <div class="gallery-overlay">
+                            <div class="property-title">${item.title}</div>
+                            <div class="property-meta">${item.price} • ${item.loc}</div>
+                        </div>
+                    `;
+                } else {
+                    galleryItem.innerHTML = `
+                        <img src="${item.src}" alt="${item.title}" loading="lazy">
+                        <div class="gallery-overlay">
+                            <div class="property-title">${item.title}</div>
+                            <div class="property-meta">${item.price} • ${item.loc}</div>
+                        </div>
+                    `;
+                }
+                galleryGrid.appendChild(galleryItem);
+            });
+        }
+        
+        // Filter Functionality
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const filter = btn.dataset.filter;
+                if (filter === 'all') {
+                    filteredImages = [...galleryImages];
+                } else {
+                    filteredImages = galleryImages.filter(img => img.type === filter);
+                }
+                renderGallery();
+            });
+        });
+        
+        // Main Gallery Functions
+        function openMainGallery(startIndex = 0) {
+            currentImageIndex = startIndex;
+            filteredImages[currentImageIndex] = filteredImages[startIndex]; // Ensure current item
+            updateMainImage();
+            mainGallery.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeMainGallery() {
+            mainGallery.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function updateMainImage() {
+            const currentItem = filteredImages[currentImageIndex];
+            mainMedia.innerHTML = '';
+            if (currentItem.src.endsWith('.mp4')) {
+                const video = document.createElement('video');
+                video.className = 'main-media';
+                video.controls = true;
+                video.autoplay = true;
+                video.muted = true;
+                video.loop = true;
+                video.playsInline = true;
+                video.style.maxWidth = '95%';
+                video.style.maxHeight = '95%';
+                video.style.objectFit = 'contain';
+                video.style.borderRadius = '10px';
+                video.style.boxShadow = '0 0 50px rgba(255,255,255,0.1)';
+                video.innerHTML = `<source src="${currentItem.src}" type="video/mp4">`;
+                mainMedia.appendChild(video);
+                video.play().catch(e => console.log('Autoplay prevented:', e));
+            } else {
+                const img = document.createElement('img');
+                img.className = 'main-media';
+                img.src = currentItem.src;
+                img.alt = currentItem.title;
+                img.style.maxWidth = '95%';
+                img.style.maxHeight = '95%';
+                img.style.objectFit = 'contain';
+                img.style.borderRadius = '10px';
+                img.style.boxShadow = '0 0 50px rgba(255,255,255,0.1)';
+                mainMedia.appendChild(img);
+            }
+        }
+        
+        // Event Listeners
+        prevBtn.onclick = () => {
+            currentImageIndex = (currentImageIndex - 1 + filteredImages.length) % filteredImages.length;
+            updateMainImage();
+        };
+        nextBtn.onclick = () => {
+            currentImageIndex = (currentImageIndex + 1) % filteredImages.length;
+            updateMainImage();
+        };
+        closeGallery.onclick = closeMainGallery;
+        mainGallery.onclick = (e) => { if (e.target === mainGallery) closeMainGallery(); };
+        
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (!mainGallery.classList.contains('active')) return;
+            if (e.key === 'Escape') closeMainGallery();
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+        
+        // Load Firebase properties and initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Firebase loads async, gallery refreshes when ready via trigger
+            setTimeout(() => {
+                if (window.PJGalleryFirebase) {
+                    window.PJGalleryFirebase.update();
+                }
+            }, 500);
+            
+            renderGallery(galleryImages); // Initial render
+            new WOW().init();
+            initNewListings();
+        });
+
+        // Gallery refresh function for Firebase callback
+        window.refreshGallery = function() {
+            const allSources = [
+                ...(window.firebaseGalleryImages || []),
+                ...galleryImages,
+                ...newListings
+            ];
+            renderGallery(allSources);
+            console.log(`📸 Gallery refreshed with ${allSources.length} items (Firebase: ${window.firebaseGalleryImages?.length || 0})`);
+        };
+
+        // New Listings Admin Panel
+        const ADMIN_PASSWORD = 'admin123';
+        let newListings = JSON.parse(localStorage.getItem('pjNewListings')) || [];
+
+        function initNewListings() {
+            document.getElementById('toggle-admin').onclick = toggleAdminPanel;
+            document.getElementById('add-listing-form').onsubmit = addNewListing;
+            renderNewListings();
+        }
+
+        function toggleAdminPanel() {
+            const input = prompt('Enter admin password:');
+            if (input === ADMIN_PASSWORD) {
+                document.getElementById('admin-panel').style.display = 'block';
+                document.getElementById('new-listings-section').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                alert('Incorrect password!');
+            }
+        }
+
+        function addNewListing(e) {
+            e.preventDefault();
+            const file = document.getElementById('new-file').files[0];
+            if (!file) return alert('Please select a file');
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const item = {
+                    src: e.target.result,
+                    title: document.getElementById('new-title').value,
+                    price: document.getElementById('new-price').value,
+                    loc: document.getElementById('new-loc').value,
+                    type: document.getElementById('new-type').value
+                };
+
+                // Try Firebase first
+                const savedToFirebase = await window.saveNewListingToFirebase?.(item) || false;
+                
+                newListings.unshift(item); // Always add local
+                localStorage.setItem('pjNewListings', JSON.stringify(newListings));
+                renderNewListings();
+                window.refreshGallery?.(); // Refresh with all sources
+                document.getElementById('add-listing-form').reset();
+                alert(savedToFirebase ? '✅ Added to Firebase & Local!' : '✅ Added to Local (Firebase unavailable)');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderNewListings() {
+            const container = document.getElementById('new-listings-list');
+            document.getElementById('new-count').textContent = newListings.length;
+            container.innerHTML = '';
+            newListings.forEach((item, index) => {
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4 new-listing-item';
+                col.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="flex-shrink-0">
+                            ${item.src.startsWith('data:video') ? 
+                                '<video src="' + item.src + '" class="new-listing-preview" muted></video>' : 
+                                '<img src="' + item.src + '" class="new-listing-preview" alt="' + item.title + '">'
+                            }
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-1">${item.title}</h6>
+                            <p class="mb-1 small">${item.price} • ${item.loc}</p>
+                            <p class="mb-0 small text-muted">${item.type}</p>
+                        </div>
+                        <button class="btn btn-danger btn-sm ms-2" onclick="deleteNewListing(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(col);
+            });
+        }
+
+        function deleteNewListing(index) {
+            if (confirm('Delete this listing?')) {
+                newListings.splice(index, 1);
+                localStorage.setItem('pjNewListings', JSON.stringify(newListings));
+                renderNewListings();
+                renderGallery([...newListings, ...galleryImages]);
+            }
+        }
+    </script>
+</body>
+</html>
